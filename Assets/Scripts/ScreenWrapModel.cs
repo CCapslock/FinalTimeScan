@@ -15,8 +15,6 @@ public class ScreenWrapModel : MonoBehaviour
 	public bool NeedToMakeQuestScreenshot;
 
 	private ScanDirection Direction;
-
-	private UiController _uiController;
 	private SpriteRenderer[] Renderers;
 	private SpriteRenderer[] UpToDownRenderers;
 	private SpriteRenderer[] LeftToRightRenderers;
@@ -39,9 +37,7 @@ public class ScreenWrapModel : MonoBehaviour
 	private float _lenghtOfScreenPart;
 	private float _startCheckingNum;
 	private float _checkingNum;
-
 	private float _widthOfSceenForComletedScreen = 4.156816f;
-
 	private int _combineNum;
 	private int _combineCurrentNum;
 	private bool _needToScan;
@@ -50,9 +46,10 @@ public class ScreenWrapModel : MonoBehaviour
 	private bool _needToTakeQuestScreenshot;
 	private bool _needToTakeCompletedScreenshot;
 
+	[SerializeField] private bool _isCountingFromUpToDown;
+
 	private void Awake()
 	{
-		_uiController = FindObjectOfType<UiController>(); 
 		_gameController = FindObjectOfType<MainGameController>();
 	}
 
@@ -61,8 +58,8 @@ public class ScreenWrapModel : MonoBehaviour
 		float num = (ScreenShotCamera.transform.position.z * -1) * Mathf.Tan((ScreenShotCamera.fieldOfView / 2) * Mathf.Deg2Rad);//расчитывает длину от 0 до верхнего края экрана в юнитах
 		HeightOfGameScreen = num * 2;//длина игрового экрана в юнитах 
 		WidthOfGameScreen = (float)Screen.width / (float)Screen.height * HeightOfGameScreen;//ширина игрового экрана в юнитах
-		//Debug.Log("WidthOfGameScreen = " + WidthOfGameScreen);
-		//создает на сцене пустые спрайты использую префаб
+																							//Debug.Log("WidthOfGameScreen = " + WidthOfGameScreen);
+																							//создает на сцене пустые спрайты использую префаб
 		UpToDownRenderers = new SpriteRenderer[AmountOfDividingIfHorizontal];
 		for (int i = 0; i < AmountOfDividingIfHorizontal; i++)
 		{
@@ -154,6 +151,20 @@ public class ScreenWrapModel : MonoBehaviour
 		ScreenshotIsMade = false;
 		ScreenNum = 0;
 		_combiningCounter = 1;
+
+		if (new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), 2, 2).y 
+			> new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), 2, 2).y)
+		{
+			_isCountingFromUpToDown = true;
+		}
+		else
+		{
+			_isCountingFromUpToDown = false;
+		}
+
+		Rect __rect = new Rect(0,HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), 2, 2);
+		Debug.Log("__rect.y = " + __rect.y);
+
 	}
 	public void CleanScene()
 	{
@@ -224,14 +235,6 @@ public class ScreenWrapModel : MonoBehaviour
 				CombineTextures();
 			}
 		}
-        if(Input.GetKeyDown(KeyCode.F))
-		{			
-			MakeScreenshot();
-        }
-		if (Input.GetKeyDown(KeyCode.G))
-		{
-			CombineTextures();
-		}
 	}
 	public void MakeScreenshot()
 	{
@@ -284,7 +287,14 @@ public class ScreenWrapModel : MonoBehaviour
 			if (Direction == ScanDirection.FromUpToDown)
 			{
 				Texture2D renderResult = new Texture2D(renderTexture.width, renderTexture.height / _amountOfDividing, TextureFormat.RGBA32, false);
-				_rect = new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1 ), renderTexture.width, renderTexture.height / _amountOfDividing);
+				if (_isCountingFromUpToDown)
+				{
+					_rect = new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1 ), renderTexture.width, renderTexture.height / _amountOfDividing);
+				}
+				else
+				{
+					_rect = new Rect(0, HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), renderTexture.width, renderTexture.height / _amountOfDividing);
+				}
 				renderResult.ReadPixels(_rect, 0, 0, false);
 				renderResult.Apply();
 				Sprite tempSprite = Sprite.Create(renderResult, new Rect(0, 0, renderResult.width, renderResult.height), new Vector2(0.5f, 1));
@@ -339,7 +349,14 @@ public class ScreenWrapModel : MonoBehaviour
 			if (Direction == ScanDirection.FromUpToDown)
 			{
 				renderResult = new Texture2D(renderTexture.width, 150, TextureFormat.RGBA32, true);
-				_rect = new Rect(0, (HeightOfGameScreen * 100) - HeightOfGameScreen * 100 / _amountOfDividing * (_combineCurrentNum + _combineNum), renderTexture.width, renderTexture.height / _amountOfDividing * _combineNum);
+				if (_isCountingFromUpToDown)
+				{
+					_rect = new Rect(0, (HeightOfGameScreen * 100) - HeightOfGameScreen * 100 / _amountOfDividing * (_combineCurrentNum + _combineNum), renderTexture.width, renderTexture.height / _amountOfDividing * _combineNum);
+				}
+				else
+				{
+					_rect = new Rect(0, HeightOfGameScreen * 100 / _amountOfDividing * (_combineCurrentNum), renderTexture.width, renderTexture.height / _amountOfDividing * _combineNum);
+				}
 				_pivot.x = 0.5f;
 				_pivot.y = 1f;
 			}
@@ -395,7 +412,7 @@ public class ScreenWrapModel : MonoBehaviour
 			ScreenShotCamera.targetTexture = null;
 		}
 
-		if(_needToTakeCompletedScreenshot)
+		if (_needToTakeCompletedScreenshot)
 		{
 			_needToTakeCompletedScreenshot = false;
 			RenderTexture renderTexture2 = ScreenShotCamera.targetTexture;

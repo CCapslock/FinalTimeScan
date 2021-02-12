@@ -354,6 +354,7 @@ MonoBehaviour:
   AmountOfDividingIfVertical: 300
   CombiningTimes: 6
   NeedToMakeQuestScreenshot: 0
+  _isCountingFromUpToDown: 1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
