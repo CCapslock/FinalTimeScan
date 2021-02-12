@@ -162,8 +162,8 @@ public class ScreenWrapModel : MonoBehaviour
 			_isCountingFromUpToDown = false;
 		}
 
-		Rect __rect = new Rect(0,HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), 2, 2);
-		Debug.Log("__rect.y = " + __rect.y);
+		//Rect __rect = new Rect(0,HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), 2, 2);
+		//Debug.Log("__rect.y = " + __rect.y);
 
 	}
 	public void CleanScene()
@@ -287,6 +287,9 @@ public class ScreenWrapModel : MonoBehaviour
 			if (Direction == ScanDirection.FromUpToDown)
 			{
 				Texture2D renderResult = new Texture2D(renderTexture.width, renderTexture.height / _amountOfDividing, TextureFormat.RGBA32, false);
+
+				Rect __rect = new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), renderTexture.width, renderTexture.height / _amountOfDividing);
+				Debug.Log("__rect.y = " + __rect.y);
 				if (_isCountingFromUpToDown)
 				{
 					_rect = new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1 ), renderTexture.width, renderTexture.height / _amountOfDividing);
