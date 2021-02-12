@@ -289,14 +289,17 @@ public class ScreenWrapModel : MonoBehaviour
 				Texture2D renderResult = new Texture2D(renderTexture.width, renderTexture.height / _amountOfDividing, TextureFormat.RGBA32, false);
 
 				Rect __rect = new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), renderTexture.width, renderTexture.height / _amountOfDividing);
-				Debug.Log("__rect.y = " + __rect.y);
+				Debug.Log("__rect.height" +
+					" = " + __rect.height);
 				if (_isCountingFromUpToDown)
 				{
-					_rect = new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1 ), renderTexture.width, renderTexture.height / _amountOfDividing);
+					_rect = new Rect(0, 200, renderTexture.width, renderTexture.height / _amountOfDividing);
+					//_rect = new Rect(0, HeightOfGameScreen * 100 - HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1 ), renderTexture.width, renderTexture.height / _amountOfDividing);
 				}
 				else
 				{
-					_rect = new Rect(0, HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), renderTexture.width, renderTexture.height / _amountOfDividing);
+					_rect = new Rect(0, 200, renderTexture.width, renderTexture.height / _amountOfDividing);
+					//_rect = new Rect(0, HeightOfGameScreen * 100 / _amountOfDividing * (ScreenNum + 1), renderTexture.width, renderTexture.height / _amountOfDividing);
 				}
 				renderResult.ReadPixels(_rect, 0, 0, false);
 				renderResult.Apply();
